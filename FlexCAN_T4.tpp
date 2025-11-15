@@ -535,6 +535,40 @@ FCTP_FUNC void FCTP_OPT::setBaudRate(uint32_t baud, FLEXCAN_RXTX listen_only) {
     {6, 7, 7}, //24
     {7, 7, 7}, //25
   }, propSeg = bitTimingTable[result][0], pSeg1 = bitTimingTable[result][1], pSeg2 = bitTimingTable[result][2];
+
+
+// vvvvv INSERT THE DIAGNOSTIC CODE BLOCK HERE vvvvv
+
+  /* START: Temporary code to print sample point */
+  if ( Serial ) {
+    // Recalculate the original total Time Quanta for the denominator of our formula
+    uint32_t total_tq = clockFreq / baud / (divisor + 1);
+
+    // The CAN bit is composed of segments. The sample point is after Sync, Prop, and Phase1.
+    // The length of a segment in Tq is (register_value + 1). Sync segment is always 1 Tq.
+    uint32_t sample_point_location_tq = 1 + (propSeg + 1) + (pSeg1 + 1);
+
+    // Calculate the sample point percentage
+    float samplePoint = (float)sample_point_location_tq / total_tq * 100.0;
+    
+    Serial.println();
+    Serial.println("--- FlexCAN_T4 Bit Timing Diagnostics ---");
+    Serial.print("  > Baud Rate: "); Serial.println(baud);
+    Serial.print("  > Total Time Quanta (Tq) per bit: "); Serial.println(total_tq);
+    Serial.print("  > Prescaler: "); Serial.println(divisor + 1);
+    Serial.print("  > propSeg (register value): "); Serial.println(propSeg);
+    Serial.print("  > pSeg1 (register value): "); Serial.println(pSeg1);
+    Serial.print("  > pSeg2 (register value): "); Serial.println(pSeg2);
+    Serial.print("  > Calculated Sample Point: "); Serial.print(samplePoint, 2); Serial.println("%");
+    Serial.println("-----------------------------------------");
+    Serial.println();
+  }
+  /* END: Temporary code to print sample point */
+
+// ^^^^^ INSERT THE DIAGNOSTIC CODE BLOCK HERE ^^^^^
+
+// This is the FIRST line that writes the values to the hardware
+
   FLEXCANb_CTRL1(_bus) = (FLEXCAN_CTRL_PROPSEG(propSeg) | FLEXCAN_CTRL_RJW(1) | FLEXCAN_CTRL_PSEG1(pSeg1) |
                     FLEXCAN_CTRL_PSEG2(pSeg2) | FLEXCAN_CTRL_ERR_MSK | FLEXCAN_CTRL_PRESDIV(divisor));
   ( listen_only != LISTEN_ONLY ) ? FLEXCANb_CTRL1(_bus) &= ~FLEXCAN_CTRL_LOM : FLEXCANb_CTRL1(_bus) |= FLEXCAN_CTRL_LOM; /* listen-only mode */
