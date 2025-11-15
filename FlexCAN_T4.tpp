@@ -520,7 +520,8 @@ FCTP_FUNC void FCTP_OPT::setBaudRate(uint32_t baud, FLEXCAN_RXTX listen_only) {
     {2, 2, 1}, //9
     {2, 3, 1}, //10
     {2, 3, 2}, //11
-    {2, 4, 2}, //12
+//    {2, 4, 2}, //12
+    {2, 5, 1}, //12 For customer F?
     {2, 5, 2}, //13
     {2, 5, 3}, //14
     {2, 6, 3}, //15
