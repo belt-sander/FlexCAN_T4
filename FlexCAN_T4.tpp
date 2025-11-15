@@ -553,6 +553,7 @@ FCTP_FUNC void FCTP_OPT::setBaudRate(uint32_t baud, FLEXCAN_RXTX listen_only) {
     float samplePoint = (float)sample_point_location_tq / total_tq * 100.0;
     
     Serial.println();
+    Serial.println("--- V2 ---");
     Serial.println("--- FlexCAN_T4 Bit Timing Diagnostics ---");
     Serial.print("  > Baud Rate: "); Serial.println(baud);
     Serial.print("  > Total Time Quanta (Tq) per bit: "); Serial.println(total_tq);
